@@ -32,6 +32,19 @@ public class ContactsController : ControllerBase
         });
         return Ok(response);
     }
+
+    /// <summary>
+    /// List All Contacts
+    /// </summary>
+    [HttpGet]
+    [ProducesResponseType(typeof(ListAllContactsQueryResult), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
+    public async Task<IActionResult> Get()
+    {
+        var response = await _sender.Send(new ListAllContactsQuery());
+        return Ok(response);
+    }
     [HttpPost]
     public async Task<IActionResult> Post(PostContactsRequest request)
     {
