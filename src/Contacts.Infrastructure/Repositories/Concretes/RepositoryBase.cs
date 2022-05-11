@@ -17,8 +17,10 @@ public class GenericRepository<TData> : IGenericRepository<TData> where TData : 
 
         var client = new MongoClient(options.Value.ConnectionString);
         var database = client.GetDatabase(options.Value.Database);
-        _collection = database.GetCollection<TData>(typeof(TData).Name);
+        _collection = database.GetCollection<TData>(GetName(typeof(TData).Name));
     }
+
+    private string GetName(string name) => $"{char.ToLowerInvariant(name[0])}{name[1..]}";
 
     public async Task<TData> CreateAsync(TData data)
     {

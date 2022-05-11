@@ -1,3 +1,4 @@
+using Contacts.Api.Filters;
 using Contacts.Api.PipelineBehaviors;
 using Contacts.Application;
 using Contacts.Infrastructure;
@@ -19,7 +20,9 @@ services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>
 services.AddApplicationServices(configuration);
 services.AddInfrastructureServices(configuration);
 
-services.AddControllers();
+services.AddControllers(options =>
+    options.Filters.Add<CustomExceptionFilter>()
+);
 services.AddLogging(config => config.AddConsole().AddConfiguration(configuration.GetSection("Logging")));
 
 //todo check logging
