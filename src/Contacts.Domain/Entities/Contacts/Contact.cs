@@ -5,11 +5,12 @@ public class Contact : ModelBase
     public string Name { get; set; }
     public string Surname { get; set; }
     public string Firm { get; set; }
-    public AdditionalInfo AdditionalInfo { get; set; }
+    public List<AdditionalInfo> AdditionalInfo { get; set; }
 }
 
 public class AdditionalInfo
 {
+    public string Id { get; set; }
     public AdditionalInfoType Type { get; set; }
     public string Value { get; set; }
 }

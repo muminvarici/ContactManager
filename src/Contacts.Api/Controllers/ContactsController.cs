@@ -113,4 +113,18 @@ public class ContactsController : ControllerBase
         });
         return Ok(response);
     }
+
+    /// <summary>
+    /// Create Additional Info
+    /// </summary>
+    [HttpPost("report-request")]
+    [ProducesResponseType(typeof(CreateReportCommandResult), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
+    public async Task<IActionResult> Post()
+    {
+        var command = new CreateReportCommand();
+        var response = await _sender.Send(command);
+        return Ok(response);
+    }
 }
