@@ -38,4 +38,18 @@ public class ContactsController : ControllerBase
         var response = await _sender.Send(request.Adapt<CreateContactCommand>());
         return Ok(response);
     }
+    /// <summary>
+    /// Create Additional Info
+    /// </summary>
+    [HttpPut("{id}/additional-info")]
+    [ProducesResponseType(typeof(CreateAdditionalInfoCommandResult), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
+    public async Task<IActionResult> Put([FromRoute] string id, [FromBody] CreateAdditionalInfoRequest request)
+    {
+        var command = request.Adapt<CreateAdditionalInfoCommand>();
+        command.Id = id;
+        var response = await _sender.Send(command);
+        return Ok(response);
+    }
 }
