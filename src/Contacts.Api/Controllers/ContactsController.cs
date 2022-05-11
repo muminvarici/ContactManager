@@ -17,6 +17,21 @@ public class ContactsController : ControllerBase
         _sender = sender;
     }
 
+    /// <summary>
+    /// Get Contact
+    /// </summary>
+    [HttpGet("{id}")]
+    [ProducesResponseType(typeof(GetContactQueryResult), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
+    public async Task<IActionResult> Get([FromRoute] string id)
+    {
+        var response = await _sender.Send(new GetContactQuery()
+        {
+            Id = id
+        });
+        return Ok(response);
+    }
     [HttpPost]
     public async Task<IActionResult> Post(PostContactsRequest request)
     {
