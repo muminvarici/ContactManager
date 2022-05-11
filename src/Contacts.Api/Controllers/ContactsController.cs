@@ -65,6 +65,22 @@ public class ContactsController : ControllerBase
         var response = await _sender.Send(command);
         return Ok(response);
     }
+
+    /// <summary>
+    /// Delete Additional Info
+    /// </summary>
+    [HttpDelete("{id}/additional-info/{infoId}")]
+    [ProducesResponseType(typeof(DeleteAdditionalInfoCommandResult), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
+    public async Task<IActionResult> Delete([FromRoute] string id, [FromRoute] string infoId)
+    {
+        var response = await _sender.Send(new DeleteAdditionalInfoCommand
+        {
+            Id = id, InfoId = infoId
+        });
+        return Ok(response);
+    }
     /// <summary>
     /// Delete Contact
     /// </summary>
