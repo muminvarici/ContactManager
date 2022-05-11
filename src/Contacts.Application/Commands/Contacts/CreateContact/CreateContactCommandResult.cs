@@ -1,6 +1,6 @@
 using MediatR;
 
-namespace Contacts.Application.Commands.Contacts;
+namespace Contacts.Application.Commands.Contacts.CreateContact;
 
 public class CreateContactCommandResult : IRequest<CreateContactCommandResult>
 {

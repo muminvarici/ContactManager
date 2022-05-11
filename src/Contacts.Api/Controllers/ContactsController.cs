@@ -1,8 +1,15 @@
 using Contacts.Api.Models.Contacts;
-using Contacts.Application.Commands.Contacts;
+using Contacts.Application.Commands.Contacts.CreateAdditionalInfo;
+using Contacts.Application.Commands.Contacts.CreateContact;
+using Contacts.Application.Commands.Contacts.DeleteAdditionalInfo;
+using Contacts.Application.Commands.Contacts.DeleteContact;
+using Contacts.Application.Commands.Reports.CreateReport;
+using Contacts.Application.Queries.Contacts;
+using Contacts.Application.Queries.Contacts.GetContact;
 using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace Contacts.Api.Controllers;
 
@@ -45,12 +52,21 @@ public class ContactsController : ControllerBase
         var response = await _sender.Send(new ListAllContactsQuery());
         return Ok(response);
     }
+
+
+    /// <summary>
+    /// Create Contacts
+    /// </summary>
     [HttpPost]
-    public async Task<IActionResult> Post(PostContactsRequest request)
+    [ProducesResponseType(typeof(CreateContactCommandResult), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
+    public async Task<IActionResult> Post(CreateContactsRequest request)
     {
         var response = await _sender.Send(request.Adapt<CreateContactCommand>());
         return Ok(response);
     }
+
     /// <summary>
     /// Create Additional Info
     /// </summary>
@@ -81,6 +97,7 @@ public class ContactsController : ControllerBase
         });
         return Ok(response);
     }
+
     /// <summary>
     /// Delete Contact
     /// </summary>
