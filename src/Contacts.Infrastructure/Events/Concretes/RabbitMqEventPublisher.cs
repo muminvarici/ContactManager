@@ -12,6 +12,7 @@ public class RabbitMqEventPublisher : IEventPublisher
 {
     private readonly ILogger<RabbitMqEventPublisher> _logger;
     private readonly IModel _channel;
+    private const string _queueName = "report";
 
     public RabbitMqEventPublisher(
         IOptions<RabbitMqSettings> settings,
@@ -29,23 +30,23 @@ public class RabbitMqEventPublisher : IEventPublisher
 
         var conn = factory.CreateConnection();
         _channel = conn.CreateModel();
-        _channel.QueueDeclare(queue: "report",
+        _channel.QueueDeclare(queue: _queueName,
             durable: false,
             exclusive: false,
             autoDelete: false,
             arguments: null);
     }
 
-    public bool Enqueue(string route, object eventMessage)
+    public bool Enqueue(object eventMessage)
     {
         var message = JsonSerializer.Serialize(eventMessage);
         var body = Encoding.UTF8.GetBytes(message);
         _channel.BasicPublish(exchange: "",
-            routingKey: route,
+            routingKey: _queueName,
             basicProperties: null,
             body: body);
         _logger.LogWarning("Event published route:{route} message: {message} to RabbitMQ",
-            route, message);
+            _queueName, message);
         return true;
     }
 }

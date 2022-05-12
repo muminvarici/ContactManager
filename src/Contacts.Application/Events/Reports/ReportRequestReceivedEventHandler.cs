@@ -7,7 +7,9 @@ public class ReportRequestReceivedEventHandler : INotificationHandler<ReportRequ
 {
     private readonly IEventPublisher _eventPublisher;
 
-    public ReportRequestReceivedEventHandler(IEventPublisher eventPublisher)
+    public ReportRequestReceivedEventHandler(
+        IEventPublisher eventPublisher
+        )
     {
         _eventPublisher = eventPublisher;
     }
@@ -15,7 +17,7 @@ public class ReportRequestReceivedEventHandler : INotificationHandler<ReportRequ
     //this request is handled by notificiation because something can be implemented in the future
     public Task Handle(ReportRequestReceivedEvent notification, CancellationToken cancellationToken)
     {
-        _ = _eventPublisher.Enqueue("report", notification);
+        _ = _eventPublisher.Enqueue(notification);
         return Task.CompletedTask;
     }
 }

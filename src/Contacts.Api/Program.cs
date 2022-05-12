@@ -9,7 +9,11 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Host.UseSerilog();
+builder.Host.UseSerilog((context, services, configuration) => configuration
+    .ReadFrom.Configuration(context.Configuration)
+    .ReadFrom.Services(services)
+    .Enrich.FromLogContext()
+    .WriteTo.Console());
 
 var services = builder.Services;
 var configuration = builder.Configuration;
@@ -47,7 +51,7 @@ void App()
 
     app.UseRouting();
     app.MapControllers();
-
+    app.UseSerilogRequestLogging();
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Contacts API V1");

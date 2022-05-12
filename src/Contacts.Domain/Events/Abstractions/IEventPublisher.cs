@@ -2,5 +2,5 @@
 
 public interface IEventPublisher
 {
-    bool Enqueue(string route, object eventMessage);
+    bool Enqueue(object eventMessage);
 }
