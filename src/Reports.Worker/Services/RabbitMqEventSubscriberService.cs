@@ -1,9 +1,11 @@
-﻿using Contacts.Infrastructure.Settings;
+﻿using MediatR;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using RabbitMQ.Client.Exceptions;
 using Reports.Worker.Events;
+using Reports.Worker.Events.ReportRequestReceived;
+using Reports.Worker.Settings;
 using System.Text;
 using System.Text.Json;
 
@@ -12,6 +14,7 @@ namespace Reports.Worker.Services;
 public class RabbitMqEventSubscriberService : BackgroundService
 {
     private readonly ILogger<RabbitMqEventSubscriberService> _logger;
+    private readonly IPublisher _publisher;
     private readonly RabbitMqSettings _settings;
     private IConnection _connection = null!;
     private IModel _channel = null!;
@@ -19,10 +22,13 @@ public class RabbitMqEventSubscriberService : BackgroundService
 
     public RabbitMqEventSubscriberService(
         ILogger<RabbitMqEventSubscriberService> logger,
-        IOptions<RabbitMqSettings> settings)
+        IOptions<RabbitMqSettings> settings,
+        IPublisher publisher
+        )
     {
         _settings = settings.Value;
         _logger = logger;
+        _publisher = publisher;
     }
 
     public override Task StartAsync(CancellationToken stoppingToken)
@@ -55,13 +61,12 @@ public class RabbitMqEventSubscriberService : BackgroundService
         consumer.Received += async (bc, ea) =>
         {
             var message = Encoding.UTF8.GetString(ea.Body.ToArray());
-            _logger.LogInformation("Processing msg: '{message}'.", message);
+            _logger.LogInformation("Received msg: '{message}'.", message);
             try
             {
-                _ = JsonSerializer.Deserialize<ReportRequestReceivedEvent>(message);
-                _logger.LogInformation("Received ReportRequestReceivedEvent {message}", message);
+                var eventMessage = JsonSerializer.Deserialize<ReportRequestReceivedEvent>(message);
 
-                await Task.Delay(new Random().Next(1, 3) * 1000, stoppingToken); // simulate an async process
+                await _publisher.Publish(eventMessage, stoppingToken);
 
                 _channel.BasicAck(ea.DeliveryTag, false);
             }
@@ -72,11 +77,11 @@ public class RabbitMqEventSubscriberService : BackgroundService
             }
             catch (AlreadyClosedException)
             {
-                _logger.RabbitMqConnectionClosed();
+                _logger.LogError("RabbitMQ connection is closed.");
             }
             catch (Exception e)
             {
-                _logger.ErrorThrown(e, e.Message);
+                _logger.LogError(e, e.Message);
             }
         };
 
@@ -89,29 +94,6 @@ public class RabbitMqEventSubscriberService : BackgroundService
     {
         await base.StopAsync(cancellationToken);
         _connection.Close();
-        _logger.RabbitMqConnectionClosed();
-    }
-}
-
-public static class LoggerExtensions
-{
-    private static readonly Action<ILogger, Exception> _rabbitMqConnectionClosed = LoggerMessage.Define(
-        LogLevel.Information,
-        new EventId(1, nameof(RabbitMqConnectionClosed)),
-        "RabbitMQ connection is closed.");
-
-    private static readonly Action<ILogger, string, Exception> _errorThrown = LoggerMessage.Define<string>(
-        LogLevel.Information,
-        new EventId(2, nameof(RabbitMqConnectionClosed)),
-        "Unknown Error");
-
-    public static void RabbitMqConnectionClosed(this ILogger logger)
-    {
-        _rabbitMqConnectionClosed(logger, null);
-    }
-
-    public static void ErrorThrown(this ILogger logger, Exception exception, string message)
-    {
-        _errorThrown(logger, message, exception);
+        _logger.LogError("Unknown Error");
     }
 }

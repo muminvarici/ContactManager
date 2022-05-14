@@ -1,5 +1,9 @@
-using Contacts.Infrastructure.Settings;
+using FluentValidation;
+using MediatR;
+using Refit;
 using Reports.Worker.Services;
+using Reports.Worker.Services.ApiClients;
+using Reports.Worker.Settings;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +22,19 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddHostedService<RabbitMqEventSubscriberService>();
 
 builder.Services.Configure<RabbitMqSettings>(builder.Configuration.GetSection(nameof(RabbitMqSettings)));
+
+builder.Services.AddMediatR(typeof(Program));
+
+builder.Services.Configure<RefitSettings>(builder.Configuration.GetSection(nameof(RefitSettings)));
+
+builder.Services.AddRefitClient<IContactsApi>()
+    .ConfigureHttpClient(c => c.BaseAddress = new Uri(builder.Configuration.GetValue<string>("ServiceUrls:ContactsApi")));
+;
+
+
+builder.Services.AddRefitClient<IReportsApi>()
+    .ConfigureHttpClient(c => c.BaseAddress = new Uri(builder.Configuration.GetValue<string>("ServiceUrls:ReportsApi")));
+;
 
 
 var app = builder.Build();

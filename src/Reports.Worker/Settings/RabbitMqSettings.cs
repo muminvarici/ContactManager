@@ -1,4 +1,4 @@
-﻿namespace Contacts.Infrastructure.Settings;
+﻿namespace Reports.Worker.Settings;
 
 public class RabbitMqSettings
 {

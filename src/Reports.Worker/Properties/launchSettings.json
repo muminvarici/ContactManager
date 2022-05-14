@@ -12,7 +12,7 @@
     "Reports.Worker": {
       "commandName": "Project",
       "dotnetRunMessages": true,
-      "launchBrowser": true,
+      "launchBrowser": false,
       "launchUrl": "swagger",
       "applicationUrl": "https://localhost:6000;http://localhost:6001",
       "environmentVariables": {
