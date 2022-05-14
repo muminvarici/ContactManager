@@ -3,7 +3,6 @@ using Contacts.Application.Commands.Contacts.CreateAdditionalInfo;
 using Contacts.Application.Commands.Contacts.CreateContact;
 using Contacts.Application.Commands.Contacts.DeleteAdditionalInfo;
 using Contacts.Application.Commands.Contacts.DeleteContact;
-using Contacts.Application.Commands.Reports.CreateReport;
 using Contacts.Application.Queries.Contacts.GetContact;
 using Contacts.Application.Queries.Contacts.ListAllContacts;
 using Mapster;
@@ -58,7 +57,7 @@ public class ContactsController : ControllerBase
 
 
     /// <summary>
-    /// Create Contacts
+    /// Create Contact
     /// </summary>
     [HttpPost]
     [ProducesResponseType(typeof(CreateContactCommandResult), (int)HttpStatusCode.OK)]
@@ -114,20 +113,6 @@ public class ContactsController : ControllerBase
         {
             Id = id
         });
-        return Ok(response);
-    }
-
-    /// <summary>
-    /// Create Report Request
-    /// </summary>
-    [HttpPost("report-request")]
-    [ProducesResponseType(typeof(CreateReportCommandResult), (int)HttpStatusCode.OK)]
-    [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
-    [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
-    public async Task<IActionResult> Post()
-    {
-        var command = new CreateReportCommand();
-        var response = await _sender.Send(command);
         return Ok(response);
     }
 }

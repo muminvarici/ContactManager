@@ -1,5 +1,6 @@
 ﻿using Contacts.Api.Models.Reports;
 using Contacts.Application.Commands.Reports.ChangeReportStatus;
+using Contacts.Application.Commands.Reports.CreateReport;
 using Contacts.Application.Queries.Reports.GetReport;
 using Contacts.Application.Queries.Reports.GetReports;
 using Mapster;
@@ -62,6 +63,20 @@ public class ReportsController : ControllerBase
     {
         var command = request.Adapt<ChangeReportStatusCommand>();
         command.Id = id;
+        var response = await _sender.Send(command);
+        return Ok(response);
+    }
+
+    /// <summary>
+    /// Create Report Request
+    /// </summary>
+    [HttpPost("report-request")]
+    [ProducesResponseType(typeof(CreateReportCommandResult), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
+    public async Task<IActionResult> Post()
+    {
+        var command = new CreateReportCommand();
         var response = await _sender.Send(command);
         return Ok(response);
     }
