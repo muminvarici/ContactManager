@@ -1,17 +1,10 @@
-﻿using MediatR;
+﻿using Contacts.Domain.Entities.Contacts;
+using MediatR;
 
-namespace Contacts.Application.Queries.Contacts;
+namespace Contacts.Application.Queries.Contacts.ListAllContacts;
 
 public class ListAllContactsQueryResult : IRequest<ListAllContactsQueryResult>
 {
     public bool IsSuccess { get; set; }
-    public List<ListAllContactsQueryResultItem> Data { get; set; }
-}
-
-public class ListAllContactsQueryResultItem
-{
-    public string Id { get; set; }
-    public string Name { get; set; }
-    public string Surname { get; set; }
-    public string Firm { get; set; }
+    public IEnumerable<Contact> Data { get; set; }
 }

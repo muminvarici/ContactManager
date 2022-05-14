@@ -22,7 +22,6 @@ public class RabbitMqEventPublisher : IEventPublisher
         _logger = logger;
         _logger.LogWarning("Connecting to rabbitmq");
 
-        //todo move to factory class
         var factory = new ConnectionFactory
         {
             HostName = settings.Value.HostName, Port = settings.Value.Port, UserName = settings.Value.UserName, Password = settings.Value.Password

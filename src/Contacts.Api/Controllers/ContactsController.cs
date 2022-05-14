@@ -4,8 +4,8 @@ using Contacts.Application.Commands.Contacts.CreateContact;
 using Contacts.Application.Commands.Contacts.DeleteAdditionalInfo;
 using Contacts.Application.Commands.Contacts.DeleteContact;
 using Contacts.Application.Commands.Reports.CreateReport;
-using Contacts.Application.Queries.Contacts;
 using Contacts.Application.Queries.Contacts.GetContact;
+using Contacts.Application.Queries.Contacts.ListAllContacts;
 using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -47,9 +47,12 @@ public class ContactsController : ControllerBase
     [ProducesResponseType(typeof(ListAllContactsQueryResult), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
-    public async Task<IActionResult> Get()
+    public async Task<IActionResult> Get([FromQuery] bool withDetails)
     {
-        var response = await _sender.Send(new ListAllContactsQuery());
+        var response = await _sender.Send(new ListAllContactsQuery
+        {
+            WithDetails = withDetails
+        });
         return Ok(response);
     }
 
@@ -115,7 +118,7 @@ public class ContactsController : ControllerBase
     }
 
     /// <summary>
-    /// Create Additional Info
+    /// Create Report Request
     /// </summary>
     [HttpPost("report-request")]
     [ProducesResponseType(typeof(CreateReportCommandResult), (int)HttpStatusCode.OK)]

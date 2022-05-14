@@ -21,7 +21,10 @@ public class CreateReportCommandHandler : IRequestHandler<CreateReportCommand, C
 
     public async Task<CreateReportCommandResult> Handle(CreateReportCommand request, CancellationToken cancellationToken)
     {
-        var report = new Report();
+        var report = new Report
+        {
+            Status = ReportStatus.Preparing
+        };
         await _repository.CreateAsync(report);
         await _publisher.Publish(new ReportRequestReceivedEvent
         {

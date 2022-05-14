@@ -1,10 +1,9 @@
 ﻿using Contacts.Domain.Entities.Contacts;
 using Contacts.Domain.Repositories.Abstracts;
-using Mapster;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace Contacts.Application.Queries.Contacts;
+namespace Contacts.Application.Queries.Contacts.ListAllContacts;
 
 public class ListAllContactsQueryHandler : IRequestHandler<ListAllContactsQuery, ListAllContactsQueryResult>
 {
@@ -22,13 +21,19 @@ public class ListAllContactsQueryHandler : IRequestHandler<ListAllContactsQuery,
 
     public async Task<ListAllContactsQueryResult> Handle(ListAllContactsQuery request, CancellationToken cancellationToken)
     {
-        var data = await _repository.GetAllAsync();
+        var data = (await _repository.GetAllAsync())
+            .Select(w =>
+            {
+                if (request.WithDetails) return w;
+                w.AdditionalInfo = null;
+                return w;
+            });
 
-        _logger.LogInformation($"Listed all contacts count:{data?.Count}");
+        _logger.LogInformation($"Listed all contacts count:{data?.Count()}");
 
         return new ListAllContactsQueryResult
         {
-            IsSuccess = data != null, Data = data?.Adapt<List<ListAllContactsQueryResultItem>>()
+            IsSuccess = data != null, Data = data
         };
     }
 }

@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Contacts.Domain.Entities.Contacts;
 
 public class Contact : ModelBase
@@ -10,6 +12,7 @@ public class Contact : ModelBase
 
 public class AdditionalInfo
 {
+    [JsonPropertyName("UUID")]
     public string Id { get; set; }
     public AdditionalInfoType Type { get; set; }
     public string Value { get; set; }

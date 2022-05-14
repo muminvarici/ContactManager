@@ -29,8 +29,6 @@ services.AddControllers(options =>
 );
 services.AddLogging(config => config.AddConsole().AddConfiguration(configuration.GetSection("Logging")));
 
-//todo check logging
-
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen(c =>
 {
@@ -44,8 +42,6 @@ services.AddSwaggerGen(c =>
 void App()
 {
     var app = builder.Build();
-
-    //todo configure serilog
 
     app.UseSwagger();
 
